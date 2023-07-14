@@ -24,12 +24,12 @@ export class ChatService {
   // situation 1. DM 채팅방이 없을 때 행위자 user1 channelType 0 is DM
   async createDMChannel(
     createChatDMDto: CreateChatDMDto,
-    target_nickname: number,
+    target_user_idx: number,
   ) {
     const { userIdx, channelType, message } = createChatDMDto;
     const socketClinetUserId = 0; // 당소. 나중에 client로부터 받아올 예정
-    const targetUser = 1; // 귀소, 일단은 지금 유저 정보가 없어서 식별자 number 값으로 대체
-
+    // let targetUser: number; // 귀소, 일단은 지금 유저 정보가 없어서 식별자 number 값으로 대체
+    let targetUser = target_user_idx;
     const channelMember = await this.channelMemberRepository.findOne({
       where: { userIdx: userIdx, channelType: channelType },
     });
@@ -83,32 +83,36 @@ export class ChatService {
     // my_user 와 target_user 의 idx 가 존재하는
     // 채널 참여자 테이블을 찾는다.(idx는 채널 참여자 테이블의 userIdx)
 
-    const query = await this.dataSource
-      .getRepository(ChannelMember)
-      .createQueryBuilder('cm')
-      .where('cm.userIdx = :my_user', { my_user: my_user })
-      .select('cm.channelId', 'channelId')
-      .getRawMany();
-    // 추가 구문이 필요하다. '채널 타입이 0인 것만 찾아야 한다.' 등
-    return query;
+    // const query = await this.dataSource
+    //   .getRepository(ChannelMember)
+    //   .createQueryBuilder('cm')
+    //   .where('cm.userIdx = :my_user', { my_user: my_user })
+    //   .select('cm.channelId', 'channelId')
+    //   .getRawMany();
+    // // 추가 구문이 필요하다. '채널 타입이 0인 것만 찾아야 한다.' 등
+    // return query;
 
-    // const query = `
-    //   SELECT *
-    //   FROM channel_member
-    //   WHERE ("userIdx" = $1 AND "channelId" IN (
-    //       SELECT "channelId"
-    //       FROM "channel_member"
-    //       WHERE "userIdx" = $2 AND "channelType" = 0
-    //   ))
-    //   OR ("userIdx" = $2 AND "channelId" IN (
-    //       SELECT "channelId"
-    //       FROM "channel_member"
-    //       WHERE "userIdx" = $1 AND "channelType" = 0
-    //   ))
-    // `;
-    // const parameters = [my_user, target_user];
+    const query = `
+      SELECT *
+      FROM channel_member
+      WHERE ("userIdx" = $1 AND "channelId" IN (
+          SELECT "channelId"
+          FROM "channel_member"
+          WHERE "userIdx" = $2 AND "channelType" = 0
+      ))
+    `;
+    const parameters = [my_user, target_user];
 
-    // return this.channelMemberRepository.query(query, parameters);
+    const pair_channelMembers: Promise<ChannelMember[]> =
+      await this.channelMemberRepository.query(query, parameters);
+    if ((await pair_channelMembers).length != 2) {
+      throw new NotFoundException(
+        `ChannelMember with userIdx ${my_user} and ${target_user} does not exist`,
+      );
+    }
+    const chIdx: Promise<ChannelMember[]> = pair_channelMembers;
+
+    return chIdx[0].channelId;
   }
 
   /*
