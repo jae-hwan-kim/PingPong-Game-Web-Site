@@ -55,7 +55,7 @@ export class ChatService {
       channelType: 0,
     });
 
-    const generatedChannelIdx = channel.id; // 그래서 저 maxId 랑 값이 같아야 함.
+    const generatedChannelIdx = channel.idx; // 그래서 저 maxId 랑 값이 같아야 함.
     // 채널 멤버 생성
     const channelMember1 = await this.channelMemberRepository.save({
       userIdx: socketClinetUserId,
