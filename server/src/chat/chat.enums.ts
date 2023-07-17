@@ -6,6 +6,9 @@ export enum channelType {
 // permission 추가 필요
 
 export enum permission {
-  DM,
-  NOTDM,
+  NORMAL,
+  OWNER,
+  ADMIN,
+  BAN,
+  MUTE,
 }

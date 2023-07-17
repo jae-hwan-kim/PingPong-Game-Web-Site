@@ -44,7 +44,7 @@ export class ChannelMember extends BaseEntity {
   @Column({ nullable: false })
   channelType: number;
 
-  @Column()
+  @Column({ nullable: true })
   mutedTime: Date;
 
   @ManyToOne(() => Channel, (channel) => channel.channelMembers)
