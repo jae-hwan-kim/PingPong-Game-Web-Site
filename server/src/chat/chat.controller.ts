@@ -1,6 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { CreateChatDMDto, FindDMChannelDto, FindDMChannelResDto } from './dto/chats.dto';
+import { CreateChatDMDto } from './dto/create-chat.dto';
+import { FindDMChannelDto, FindDMChannelResDto } from './dto/find-chat.dto';
 import { UsersService } from 'src/users/users.service';
 
 @Controller('chat/')
@@ -11,8 +20,10 @@ export class ChatController {
   ) {}
 
   @Post('dm/:target_nickname')
-  createChannelandInitDM(@Param('target_nickname') target_nickname: string, @Body('content') content: string) {
-
+  createChannelandInitDM(
+    @Param('target_nickname') target_nickname: string,
+    @Body('content') content: string,
+  ) {
     // const nick = createChatDMDto.target_nickname;
     // const user:User = this.userService.findOne(nick);
     // user.id
@@ -24,9 +35,11 @@ export class ChatController {
   @Get('dm/:target_nickname')
   async findDMChannel(@Param('target_nickname') target_nickname: string) {
     // 일단 임시로 1은 나임을 알림,
-    const my_user = "jujeon"; // temporary variable, my_user_idx
+    const my_user = 'jujeon'; // temporary variable, my_user_idx
     const my_user_idx = await this.usersService.findUserIdxByNickname(my_user); // my_user_idx
-    const target_userIdx = await this.usersService.findUserIdxByNickname(target_nickname); // target_user_idx
+    const target_userIdx = await this.usersService.findUserIdxByNickname(
+      target_nickname,
+    ); // target_user_idx
     return this.chatService.findDMChannel(my_user_idx, target_userIdx); // parmas types are number
   }
   // @Post('dm/:target_nickname')
@@ -40,7 +53,6 @@ export class ChatController {
   // create(@Body() createChatDto: CreateChatDto) {
   //   return this.chatService.create(createChatDto);
   // }
-
 
   // @Get()
   // findAll() {
