@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Logger,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDMDto, CreateChatDto } from './dto/create-chat.dto';
@@ -17,6 +18,7 @@ import { channelType } from './chat.enums';
 
 @Controller('chat/')
 export class ChatController {
+  private logger = new Logger('ChatController');
   constructor(
     private readonly chatService: ChatService,
     private readonly usersService: UsersService,
@@ -36,7 +38,7 @@ export class ChatController {
     // User 로 바꿔줘야함
     */
     const owner: any = {
-      idx: 0,
+      // idx: 0,
       intra: 'jaekim',
       nickname: 'kingjaehwan',
     };
@@ -45,14 +47,17 @@ export class ChatController {
       intra: 'jujeon',
       nickname: target_nickname,
     };
-    const createChatDMDto = new CreateChatDMDto(
-      // channelIdx 는 ??
-      owner.idx,
-      channelType.PRIVATE,
-      content,
-    );
-
-    return this.chatService.createDMChannel(createChatDMDto, owner, target); // 1은 대상 id임
+    try {
+      const createChatDMDto = new CreateChatDMDto(
+        // channelIdx 는 ??
+        owner.idx,
+        channelType.PRIVATE,
+        content,
+      );
+      return this.chatService.createDMChannel(createChatDMDto, owner, target); // 1은 대상 id임
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   // @Get('dm/:target_nickname')

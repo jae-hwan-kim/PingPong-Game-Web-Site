@@ -10,6 +10,9 @@ export class CreateChatDto {
 }
 export class CreateChatDMDto {
   constructor(userIdx: number, channelType: number, message: string) {
+    if (!userIdx || !channelType || !message) {
+      throw new Error('Fail createChatDMDto');
+    }
     this.userIdx = userIdx;
     this.channelType = channelType;
     this.message = message;
