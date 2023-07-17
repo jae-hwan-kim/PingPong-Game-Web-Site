@@ -1,17 +1,21 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  RemoveOptions,
+  SaveOptions,
+  Unique,
+} from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  idx: number;
 
-    @PrimaryColumn()
-    idx: number;
+  @Column({ unique: true })
+  intra: string;
 
-    @Column({ unique: true})
-    intra: string;
-
-    @Column({ unique: true})
-    nickname: string;
-
-    
-
+  @Column({ unique: true })
+  nickname: string;
 }
