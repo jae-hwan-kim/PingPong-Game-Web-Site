@@ -11,7 +11,6 @@ export class ChatService {
   private logger = new Logger('ChatService');
 
   constructor(
-    @Inject('DATA_SOURCE') private dataSource,
     @Inject('MESSAGES_REPOSITORY')
     private messageRepository: Repository<Message>,
     @Inject('CHANNELS_REPOSITORY')
@@ -47,7 +46,7 @@ export class ChatService {
     // 1. chanel table 생성
     // 이거 용도, 한 채널을 생성한 뒤에 그 채널에 대한 두 가지의 채널멤버 튜플을 넣어야해서.
 
-    // @PrimaryGeneratedColumn() 하면 괜찮은거 아닌가?! idx 자동 증가됨.
+    // @PrimaryGeneratedColumn() 하면 Max를 찾을 필요가 없음. idx 자동 증가됨.
     // const channelMaxId = await this.channelRepository
     //   .createQueryBuilder('channel')
     //   .select('MAX(channel.idx)', 'id')
@@ -64,7 +63,7 @@ export class ChatService {
     });
 
     // 2. chanel_member table 생성
-    this.logger.debug(`[Debug] channelIdx: ${channel.idx}`);
+    // this.logger.debug(`[Debug] channelIdx: ${channel.idx}`);
     const channelIdx = channel.idx;
     // 채널 멤버 생성
     const channelOwner = await this.channelMemberRepository.save({
