@@ -1,5 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
+import { Message } from '../chat.entity';
 
+export class RespondMessageDto {
+  messages: Message[];
+  channelName: string;
+}
 export class FindDMChannelDto {
   @IsNotEmpty()
   my_nickname: string;

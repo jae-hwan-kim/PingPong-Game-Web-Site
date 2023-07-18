@@ -10,6 +10,7 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
   async findUserIdxByNickname(nickname: string) {
+    console.log('nickname: ', nickname);
     const user = await this.userRepository.findOne({
       where: [{ nickname: nickname }],
     });
