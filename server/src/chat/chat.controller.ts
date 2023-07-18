@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Logger,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDMDto, CreateChatDto } from './dto/create-chat.dto';
@@ -15,6 +17,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/users.entity';
 import { Message } from './chat.entity';
 import { channelType } from './chat.enums';
+import { FindTargetNickname } from './pipes/chat-validation.pipe';
 
 @Controller('chat/')
 export class ChatController {
@@ -25,10 +28,12 @@ export class ChatController {
   ) {}
 
   @Post('dm/:target_nickname')
+  @UsePipes(ValidationPipe)
   createChannelandInitDM(
-    @Param('target_nickname') target_nickname: string,
+    @Param('target_nickname') target_nickname: FindTargetNickname,
     @Body('content') content: string,
   ): Promise<CreateChatDto> {
+
     /* wochae 기록
     // const nickname = createChatDMDto.target_nickname;
     // const user:User = this.userService.findOne(nickname);
@@ -38,7 +43,7 @@ export class ChatController {
     // User 로 바꿔줘야함
     */
     const owner: any = {
-      // idx: 0,
+      idx: 0,
       intra: 'jaekim',
       nickname: 'kingjaehwan',
     };
@@ -47,14 +52,14 @@ export class ChatController {
       intra: 'jujeon',
       nickname: target_nickname,
     };
+    this.logger.log(content);
     try {
       const createChatDMDto = new CreateChatDMDto(
-        // channelIdx 는 ??
         owner.idx,
         channelType.PRIVATE,
         content,
       );
-      return this.chatService.createDMChannel(createChatDMDto, owner, target); // 1은 대상 id임
+      return this.chatService.createDMChannel(createChatDMDto, owner, target);
     } catch (error) {
       this.logger.error(error);
     }
@@ -74,31 +79,5 @@ export class ChatController {
   // createChannelandInitDM(@Param('target_nickname') target_nickname: string, @Body('content') content: string) {
   //   const createChatDMDto = new CreateChatDMDto(0, 0, content);
   //   return this.chatService.createDMChannel(createChatDMDto, target_nickname);
-  // }
-
-  // -----------------------------------------------------
-  // @Post()
-  // create(@Body() createChatDto: CreateChatDto) {
-  //   return this.chatService.create(createChatDto);
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.chatService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.chatService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateChatDto: UpdateChatDto) {
-  //   return this.chatService.update(+id, updateChatDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.chatService.remove(+id);
   // }
 }
