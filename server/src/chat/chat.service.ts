@@ -8,7 +8,7 @@ import {
   RespondMessageDto,
 } from './dto/find-chat.dto';
 import { permission, channelType } from './chat.enums';
-import { User } from 'src/users/users.entity';
+import { Users } from 'src/users/users.entity';
 
 @Injectable()
 export class ChatService {
@@ -28,8 +28,8 @@ export class ChatService {
   // situation 1. DM 채팅방이 없을 때 행위자 user1 channelType 0 is DM
   async createDMChannel(
     createChatDMDto: CreateChatDMDto,
-    owner: User,
-    targetUser: User,
+    owner: Users,
+    targetUser: Users,
   ): Promise<CreateChatDto> {
     const { userIdx, channelType, message } = createChatDMDto;
     const targetNickname = targetUser.nickname;

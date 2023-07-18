@@ -1,15 +1,7 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  RemoveOptions,
-  SaveOptions,
-  Unique,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class User extends BaseEntity {
+export class Users extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
 
@@ -18,4 +10,19 @@ export class User extends BaseEntity {
 
   @Column({ unique: true })
   nickname: string;
+
+  @Column({ default: 'https://cdn.intra.42.fr/users/medium_default.png' })
+  imgUrl: string;
+
+  @Column({ default: 0 })
+  rankpoint: number;
+
+  @Column({ default: 0 })
+  rate: number;
+
+  @Column({ default: true })
+  isOnline: boolean;
+
+  @Column({ default: true })
+  available: boolean;
 }

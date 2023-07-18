@@ -1,6 +1,9 @@
-
 export class UserDto {
-    idx: number;
-    intra: string;
-    nickname: string;
+  intra: string;
+  nickname: string;
+  imgUrl: string;
+  rankpoint: number;
+  rate: number;
+  isOnline: boolean;
+  available: boolean;
 }

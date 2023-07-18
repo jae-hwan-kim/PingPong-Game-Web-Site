@@ -14,7 +14,7 @@ import { ChatService } from './chat.service';
 import { CreateChatDMDto, CreateChatDto } from './dto/create-chat.dto';
 import { RespondMessageDto } from './dto/find-chat.dto';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/users.entity';
+import { Users } from 'src/users/users.entity';
 import { Message } from './chat.entity';
 import { channelType } from './chat.enums';
 import { FindTargetNickname } from './pipes/chat-validation.pipe';

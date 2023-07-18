@@ -30,16 +30,16 @@ export class UsersGateway
   afterInit() {
     this.logger.log('UsersGateway Initialized!');
     this.server.on('connection', (socket) => {
-      console.log('User : ', socket.id, 'Connected');
+      console.log('Users : ', socket.id, 'Connected');
     });
   }
 
   handleConnection(client: any, ...args: any[]) {
-    this.logger.log(`User : ${client.id} connected`);
+    this.logger.log(`Users : ${client.id} connected`);
   }
 
   handleDisconnect(client: any) {
-    this.logger.log(`User : ${client.id} disconnected`);
+    this.logger.log(`Users : ${client.id} disconnected`);
   }
 
   @Bind(MessageBody())
