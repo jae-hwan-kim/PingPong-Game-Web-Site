@@ -13,14 +13,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersService {
   constructor(
     @Inject('USERS_REPOSITORY')
-    private userRepository: Repository<Users>,
+    private usersRepository: Repository<Users>,
   ) {}
-  async findUserIdxByNickname(nickname: string) {
-    console.log('nickname: ', nickname);
-    const user = await this.userRepository.findOne({
-      where: [{ nickname: nickname }],
-    });
-    return user.idx;
+
+  async findUserIdxByNickname(intra: string): Promise<Users> {
+    // console.log('nickname: ', nickname);
+    return await this.usersRepository.findOneBy({ intra });
   }
 
   // async 가 필요한가?
@@ -32,9 +30,9 @@ export class UsersService {
   async createUser(userCreadentailsDto: CreateUserDto): Promise<void> {
     const { intra, nickname } = userCreadentailsDto;
 
-    const user = this.userRepository.create({ intra, nickname });
+    const user = this.usersRepository.create({ intra, nickname });
     try {
-      await this.userRepository.save(user);
+      await this.usersRepository.save(user);
     } catch (error) {
       throw new InternalServerErrorException();
       // console.log('error', error);

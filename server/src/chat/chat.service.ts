@@ -96,20 +96,23 @@ export class ChatService {
   }
 
   async findDMChannel(
-    my_idx: number,
-    target_idx: number,
+    owner: Users,
+    target: Users,
   ): Promise<RespondMessageDto | boolean> {
-    // my_idx 와 target_idx 의 idx 가 존재하는
+    // owner 와 target 의 idx 가 존재하는
     // 채널 참여자 테이블을 찾는다.(idx는 채널 참여자 테이블의 userIdx)
     // TODO: 여러 사람과 DM 을 할 경우 문제가 생길 수 있을 것 같다.
+    // console.log('[debug] owner: ', owner);
+    // console.log('[debug] target: ', target);
+
     const myChannel = await this.channelMemberRepository
       .createQueryBuilder('cm')
-      .where('"userIdx" = :target_idx AND "channelType" = 0', {
-        target_idx: target_idx,
+      .where('"userIdx" = :target AND "channelType" = 0', {
+        target: target.idx,
       })
       .getRawOne();
-    console.log('[debug] myChannel[0]: ', myChannel[0]);
-    console.log('[debug] myChannel: ', myChannel);
+    // console.log('[debug] myChannel[0]: ', myChannel[0]);
+    // console.log('[debug] myChannel: ', myChannel);
     const ourChannelIdx: number = myChannel.cm_channelIdx;
 
     if (ourChannelIdx == null) {
@@ -120,7 +123,7 @@ export class ChatService {
     const channelIdx = await this.channelMemberRepository
       .createQueryBuilder('channel_member')
       .select()
-      .where('"userIdx" = :my_idx', { my_idx: my_idx })
+      .where('"userIdx" = :owner', { owner: owner.idx })
       .andWhere('"channelIdx" = :ourChannelIdx', {
         ourChannelIdx: ourChannelIdx,
       })
@@ -129,35 +132,19 @@ export class ChatService {
       this.logger.log('No DM Channel');
       return false;
     }
-
-    console.log('[debug] channelIdx: ', channelIdx);
-    console.log(
-      '[debug] channelIdx.channel_member_chanelIdx: ',
-      channelIdx.channel_member_channelIdx,
-    );
     // 채널아이디가 channelIdx 인 메세지들 컬럼 배열과 채널 이름 보내기
-    // const messages = await this.messageRepository
-    const messages: any = [
-      {
-        channelIdx: 1,
-        sender: 1,
-        message: 'hello',
-        messageDate: new Date(),
-      },
-      {
-        channelIdx: 1,
-        sender: 0,
-        message: 'hi',
-        msgDate: new Date(),
-      },
-    ];
+    const messages = await this.getAllMessages();
     const channelName = 'jaekim, jujeon';
     return { messages, channelName };
+  }
+
+  async getAllMessages(): Promise<Message[]> {
+    return this.messageRepository.find();
   }
 }
 
 // const pair_channelMembers: Promise<ChannelMember[]> = await this.channelMemberRepository.query(query, parameters);
 // if ((await pair_channelMembers).length != 2) {
-//   throw new NotFoundException(`ChannelMember with userIdx ${my_idx} and ${target_idx} does not exist`);
+//   throw new NotFoundException(`ChannelMember with userIdx ${owner} and ${target} does not exist`);
 // }
 // const chIdx: Promise<ChannelMember[]> = pair_channelMembers;

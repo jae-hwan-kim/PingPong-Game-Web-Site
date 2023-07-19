@@ -29,9 +29,8 @@ export class ChatController {
 
   @Post('dm/:target_nickname')
   @UsePipes(ValidationPipe)
-  createChannelandInitDM(
-    // FindTargetNickname 을 굳이 할 필요가 있을까...? 어차피 string 으로 들어올텐데..!
-    @Param('target_nickname') target_nickname: FindTargetNickname,
+  async createChannelandInitDM(
+    @Param('target_nickname') target_nickname: string,
     @Body('content') content: string,
   ): Promise<CreateChatDto> {
     /* wochae 기록
@@ -42,16 +41,20 @@ export class ChatController {
     // user 를 그대로 보내주는 것도 괜찮을 것 같다. channelName 에 이름을 나열해야해서.
     // type 을 User 로 바꿔줘야함
     */
-    const owner: any = {
-      idx: 0,
-      intra: 'jaekim',
-      nickname: 'kingjaehwan',
-    };
-    const target: any = {
-      idx: 1,
-      intra: 'jujeon',
-      nickname: target_nickname,
-    };
+    const owner = await this.usersService.findUserIdxByNickname('jaekim');
+    const target = await this.usersService.findUserIdxByNickname(
+      target_nickname,
+    );
+    // const owner: any = {
+    //   idx: 1,
+    //   intra: 'jaekim',
+    //   nickname: 'kingjaehwan',
+    // };
+    // const target: any = {
+    //   idx: 2,
+    //   intra: 'jujeon',
+    //   nickname: target_nickname,
+    // };
     this.logger.log(content);
     try {
       const createChatDMDto = new CreateChatDMDto(
@@ -67,25 +70,20 @@ export class ChatController {
 
   @Get('dm/:target_nickname')
   async findDMChannel(
-    @Param('target_nickname') target_nickname: FindTargetNickname,
+    @Param('target_nickname') target_nickname: string,
   ): Promise<RespondMessageDto | boolean> {
-    // any 를 User 로 바꿔줘야함
-    const owner: any = {
-      idx: 2,
-      intra: 'jaekim',
-      nickname: 'kingjaehwan',
-    };
-    const target: any = {
-      idx: 1,
-      intra: 'jujeon',
-      nickname: target_nickname,
-    };
-    // const my_idx = await this.usersService.findUserIdxByNickname(owner.idx);
+    const owner = await this.usersService.findUserIdxByNickname('jaekim');
+    const target = await this.usersService.findUserIdxByNickname(
+      target_nickname,
+    );
+    console.log(owner);
+    console.log(target);
+    // // const my_idx = await this.usersService.findUserIdxByNickname(owner.idx);
     // getUserProfile 로 user 의 idx 를 구해야함.
     // const target_idx = await this.usersService.findUserIdxByNickname(
     //   target.idx,
     // ); // target_user_idx
     // return this.chatService.findDMChannel(my_idx, target_idx); // parmas types are number
-    return this.chatService.findDMChannel(owner.idx, target.idx); // parmas types are number
+    return this.chatService.findDMChannel(owner, target); // parmas types are number
   }
 }
