@@ -1,0 +1,11 @@
+node_modules
+config
+
+src/configs
+
+*.yaml
+backend_server/public/img/*
+.DS_Store
+backend_server/.env.*
+backend_server/.env
+.DS_Store
